@@ -10,6 +10,8 @@ describe("Testing auth API", function () {
 
 
     before(async function () {
+        // we need to ensure indexes by hand in tests
+        // because mongoose by default does that in background and asynchronously
         for(const modelName of mongoose.modelNames()) {
             await mongoose.model(modelName).ensureIndexes();
         }

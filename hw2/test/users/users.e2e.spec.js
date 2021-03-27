@@ -6,6 +6,8 @@ const expect = chai.expect;
 
 describe("Testing users API", function () {
     before(async() => {
+        // we need to ensure indexes by hand in tests
+        // because mongoose by default does that in background and asynchronously
         for(const modelName of mongoose.modelNames()) {
             await mongoose.model(modelName).ensureIndexes();
         }
