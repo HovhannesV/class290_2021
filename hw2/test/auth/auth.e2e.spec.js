@@ -185,5 +185,36 @@ describe("Testing auth API", function () {
                 });
 
         });
+        it('Unlocks a locked user with admin privileges and the user should be able to login', async function () {
+            // should not be able to login
+            await request(app)
+                .post('/auth/login')
+                .send({
+                    username: "willsmith",
+                    password: "12345"
+                })
+                .expect(423)
+                .expect((res) => {
+                    return expect(res.body).eql({ message: "The user is locked!" });
+                });
+
+            //unlocking the user
+            await request(app)
+                .patch(`/admin/unlock-user/${lockedUserId}/`)
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200)
+                .expect((res) => {
+                    return expect(res.body).eql({ message: "User has successfully been unlocked!" });
+                });
+
+            // should be able to login
+            await request(app)
+                .post('/auth/login')
+                .send({
+                    username: "willsmith",
+                    password: "12345"
+                })
+                .expect(200);
+        })
     });
 })
