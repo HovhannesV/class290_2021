@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const chai = require('chai');
 const expect = chai.expect;
 
+// I decided to add tests, as well, instead of manual checking :)
 describe("Testing auth API", function () {
     let lockedUserId;
 
@@ -85,6 +86,33 @@ describe("Testing auth API", function () {
                     return expect(res.body).eql({ message: "The user is locked!" });
                 });;
         });
+        it('It should not lock the user after 2 failed logins.', async function () {
+            await request(app)
+                .post('/users')
+                .send({
+                    username: "james",
+                    password: "12345",
+                    firstName: "james",
+                    lastName: "Smith",
+                    role: "customer",
+                })
+                .expect(201);
+            await request(app).post('/auth/login').send({
+                username: "james",
+                password: "wrong"
+            });
+
+            await request(app).post('/auth/login').send({
+                username: "james",
+                password: "wrong"
+            });
+
+            await request(app).post('/auth/login').send({
+                username: "james",
+                password: "12345"
+            }).expect(200);
+
+        });
     })
 
     describe('Testing unlocking/locking a locked user', function () {
@@ -113,7 +141,6 @@ describe("Testing auth API", function () {
                 })
         })
 
-        // I decided to add tests, as well :)
         it('Locks a user with admin privileges', async function() {
             let targetUserToken;
             // should be able to login

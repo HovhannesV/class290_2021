@@ -24,5 +24,5 @@ module.exports = {
         ADMIN : 'admin',
         CUSTOMER : 'customer'
     },
-    MAX_SUCCESSIVE_FAILURES : 2
+    MAX_SUCCESSIVE_FAILURES : 3
 }

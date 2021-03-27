@@ -13,6 +13,9 @@ class AuthService {
         if (!user || !bcrypt.compareSync(password, user.password)) {
             // doing custom mongo update to prevent version errors
             await User.update({ username }, { $inc : { successiveFailuresCount : 1 } });
+            if(user.successiveFailuresCount + 1 === MAX_SUCCESSIVE_FAILURES) {
+                throw new Locked('The user is locked!');
+            }
             throw new Unauthorized();
         }
         if(user.successiveFailuresCount > 0) { // reset only if needed
