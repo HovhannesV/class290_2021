@@ -19,5 +19,9 @@ module.exports = {
                 resolve(data);
             });
         });
+    },
+    USER_ROLES: {
+        ADMIN : 'admin',
+        CUSTOMER : 'customer'
     }
 }
