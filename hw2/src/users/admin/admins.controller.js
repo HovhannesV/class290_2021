@@ -17,4 +17,17 @@ router.patch('/unlock-user/:id', asyncHandler(async (req, res) => {
 
 }));
 
+router.patch('/lock-user/:id', asyncHandler(async (req,res) => {
+    if(req.user.role !== USER_ROLES.ADMIN) throw new Unauthorized('Not authorized!');
+
+    const { id } = req.params;
+    console.log(id);
+    await adminsService.lockUser(id);
+
+    res.send({
+        message : 'User has successfully been locked!'
+    });
+
+}));
+
 module.exports = router;

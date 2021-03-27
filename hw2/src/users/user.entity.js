@@ -22,6 +22,11 @@ const schema = new Schema({
         default : 0
     },
 
+    lockedByAdmin : {
+        type : Boolean,
+        default : false
+    },
+
     firstName: {
         type: String,
         required: true,

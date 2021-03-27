@@ -2,12 +2,12 @@ const User = require('../users/user.entity');
 const { Unauthorized, Locked } = require('http-errors')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const MaxSuccessiveFailures = 2;
+const {MAX_SUCCESSIVE_FAILURES} = require('./../commons/util');
 
 class AuthService {
     async validate(username, password) {
         const user = await User.findOne({ username }).lean();
-        if(user.successiveFailuresCount === MaxSuccessiveFailures) {
+        if(user.successiveFailuresCount === MAX_SUCCESSIVE_FAILURES || user.lockedByAdmin) {
             throw new Locked('The user is locked!');
         }
         if (!user || !bcrypt.compareSync(password, user.password)) {

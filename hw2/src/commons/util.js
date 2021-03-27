@@ -23,5 +23,6 @@ module.exports = {
     USER_ROLES: {
         ADMIN : 'admin',
         CUSTOMER : 'customer'
-    }
+    },
+    MAX_SUCCESSIVE_FAILURES : 2
 }

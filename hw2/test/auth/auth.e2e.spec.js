@@ -87,7 +87,7 @@ describe("Testing auth API", function () {
         });
     })
 
-    describe('Testing unlocking a locked user', function () {
+    describe('Testing unlocking/locking a locked user', function () {
         let token;
 
         beforeEach(function () {
@@ -112,5 +112,51 @@ describe("Testing auth API", function () {
                     return expect(res.body).eql({ message: "User has successfully been unlocked!" });
                 })
         })
+
+        // I decided to add tests, as well :)
+        it('Locks a user with admin privileges', async function() {
+            let targetUserToken;
+            // should be able to login
+            await request(app)
+                .post('/auth/login')
+                .send({
+                    username: "willsmith",
+                    password: "12345"
+                })
+                .expect(200)
+                .expect((res) => {
+                    targetUserToken = res.body.token;
+                });
+
+            await request(app)
+                .patch(`/admin/lock-user/${lockedUserId}/`)
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200)
+                .expect(res => {
+                    return expect(res.body).eql({ message: "User has successfully been locked!" });
+                });
+
+            // should not be able to login
+            await request(app)
+                .post('/auth/login')
+                .send({
+                    username: "willsmith",
+                    password: "12345"
+                })
+                .expect(423)
+                .expect((res) => {
+                    return expect(res.body).eql({ message: "The user is locked!" });
+                });
+
+            // should not be able to perform other actions
+            await request(app)
+                .get('/posts')
+                .set('Authorization', `Bearer ${targetUserToken}`)
+                .expect(423)
+                .expect((res) => {
+                    return expect(res.body).eql({ message: "The user is locked!" });
+                });
+
+        });
     });
 })
