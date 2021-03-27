@@ -17,6 +17,11 @@ const schema = new Schema({
         required: true,
     },
 
+    successiveFailuresCount : {
+        type : Number,
+        default : 0
+    },
+
     firstName: {
         type: String,
         required: true,
