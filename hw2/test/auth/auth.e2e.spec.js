@@ -7,7 +7,12 @@ const expect = chai.expect;
 describe("Testing auth API", function () {
     let lockedUserId;
 
+
+
     before(async function () {
+        for(const modelName of mongoose.modelNames()) {
+            await mongoose.model(modelName).ensureIndexes();
+        }
         await request(app)
             .post('/users')
             .send({

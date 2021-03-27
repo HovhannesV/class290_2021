@@ -1,12 +1,20 @@
-const { NotFound } = require('http-errors');
+const { NotFound, Conflict, BadRequest } = require('http-errors');
 const User = require('./user.entity');
 const Post = require('../posts/post.entity');
 const mongoose = require('mongoose');
 
 class UserService {
-    create(payload) {
+    async create(payload) {
         const user = new User(payload);
-        return user.save();
+        try {
+            await user.save();
+        } catch(err) {
+            if(err.name === 'MongoError' && err.code === 11000) {
+                throw new Conflict('There exists user conflicting to the provided one');
+            }
+            throw err;
+        }
+        return user;
     }
 
     findAll(query) {

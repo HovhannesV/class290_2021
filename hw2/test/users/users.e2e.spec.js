@@ -5,7 +5,11 @@ const chai = require('chai');
 const expect = chai.expect;
 
 describe("Testing users API", function () {
-
+    before(async() => {
+        for(const modelName of mongoose.modelNames()) {
+            await mongoose.model(modelName).ensureIndexes();
+        }
+    })
     after(async function () {
         await mongoose.connection.db.dropDatabase();
     })
@@ -26,7 +30,7 @@ describe("Testing users API", function () {
                 })
         })
 
-        it.skip("Fails to create a user with existing username", function () {
+        it("Fails to create a user with existing username", async function () {
             return request(app)
                 .post('/users')
                 .send({
